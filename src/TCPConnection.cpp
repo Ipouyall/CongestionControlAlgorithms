@@ -6,6 +6,22 @@ TCPConnection::TCPConnection(){
     cwnd = 1;
     ssthresh = 65535;
     rtt = 0;
+    last_sent = 0
+}
+
+int TCPConnection::SendData(int size) {
+    last_sent++;
+    sent_data.push_back(last_sent);
+    return last_sent
+}
+
+void TCPConnection::onAck(int ack) {
+    auto it = find(sent_data.begin(), sent_data.end(), ack);
+    if (it != sent_data.end())
+        sent_data.erase(it);
+    else
+        return;
+    cwnd += 1;
 }
 
 void TCPConnection::onRTTUpdate(int rtt) {
