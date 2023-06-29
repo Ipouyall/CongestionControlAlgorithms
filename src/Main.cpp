@@ -1,11 +1,10 @@
 #include <iostream>
-// #include "TCPConnection.h"
-#include "NewReno.h"
+#include "TCPConnection.h"
 
 using namespace std;
 
 void run() {
-    TCPNewRenoConnection con;
+    TCPConnection con;
     int losts = 0;
     for (int i = 0; i < 2000; i++) {
         vector<Packet> packets = con.SendData(losts);
