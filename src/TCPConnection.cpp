@@ -12,7 +12,7 @@ TCPConnection::TCPConnection() {
     curr_time = 0;
     wait_time = 0;
     time_out = 2 * rtt;
-    fast_recovery = true;
+    fast_recovery = false;
 }
 
 vector<Packet> TCPConnection::SendData(int packet_losts) {
@@ -28,12 +28,11 @@ bool TCPConnection::timeOut() {
     return wait_time * rtt >= time_out;
 }
 void TCPConnection::onRTTUpdate(int& packet_losts) {
-    save_state("tcp_new_reno.csv", curr_time, cwnd);
+    save_state("tcp_reno.csv", curr_time, cwnd);
     if (wait_time > 0)
         cout << "hi";
     if (packet_losts > 0 && packet_losts < cwnd - 3 && fast_recovery) {
         curr_time += 0.3 * rtt;
-        //save_state("tcp_new_reno.csv", curr_time, cwnd);
         ssthresh = ceil((1.0 * cwnd) / (1LL << packet_losts));
         cwnd = ssthresh;
         packet_losts = 0;
@@ -69,6 +68,7 @@ int TCPConnection::onPacketLost(std::vector<Packet>& packets) {
         //sleep_until(system_clock::now() + seconds(1));
         double rand_num = (double)rand() / RAND_MAX;
         double frac = (sent_packet / 1000.0);
+        // cout << "hi\n";
         if ((pow(frac, 10) > rand_num)) {
             packets[i].is_ack = false;
             lost_count++;
@@ -76,12 +76,6 @@ int TCPConnection::onPacketLost(std::vector<Packet>& packets) {
         }
     }
     return lost_count;
-    //double rand_num = (double)rand() / RAND_MAX;
-    //double frac = (cwnd / 1000.0);
-    //if (pow(frac, 10)> rand_num)
-    //    return 1;
-    //else
-    //    return 0;
 }
 int TCPConnection::getCwnd() {
     return cwnd;

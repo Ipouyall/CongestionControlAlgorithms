@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <math.h>
+#include <climits>
 #include "SaveState.h"
 
 #ifndef CONGESTIONCONTROLALGORITHMS_TCPCONNECTION_H
