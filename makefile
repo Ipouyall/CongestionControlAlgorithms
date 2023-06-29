@@ -7,7 +7,7 @@ BINDIR = bin
 TESTDIR = test
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
-TARGET = $(BINDIR)/RoutingProtocols
+TARGET = $(BINDIR)/CongestionControlAlgorithms
 
 # ANSI color codes
 RED = \033[0;31m
