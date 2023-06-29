@@ -2,32 +2,87 @@
 
 using namespace std;
 
-TCPConnection::TCPConnection(){
+TCPConnection::TCPConnection() {
     cwnd = 1;
-    ssthresh = 65535;
-    rtt = 0;
-    last_sent = 0
+    ssthresh = INT_MAX;
+    rtt = 2;
+    last_sent = 0;
+
+    lost_rate = 0.0001;
+    curr_time = 0;
+    wait_time = 0;
+    time_out = 2 * rtt;
+    fast_recovery = true;
 }
 
-int TCPConnection::SendData(int size) {
-    last_sent++;
-    sent_data.push_back(last_sent);
-    return last_sent
+vector<Packet> TCPConnection::SendData(int packet_losts) {
+    vector<Packet> data;
+    if (packet_losts > 0)
+        return data;
+    for (int i = 0; i < cwnd; i++) {
+        data.push_back(Packet{ rand(), true, false });
+    }
+    return data;
 }
-
-void TCPConnection::onAck(int ack) {
-    auto it = find(sent_data.begin(), sent_data.end(), ack);
-    if (it != sent_data.end())
-        sent_data.erase(it);
-    else
+bool TCPConnection::timeOut() {
+    return wait_time * rtt >= time_out;
+}
+void TCPConnection::onRTTUpdate(int& packet_losts) {
+    save_state("tcp_new_reno.csv", curr_time, cwnd);
+    if (wait_time > 0)
+        cout << "hi";
+    if (packet_losts > 0 && packet_losts < cwnd - 3 && fast_recovery) {
+        curr_time += 0.3 * rtt;
+        //save_state("tcp_new_reno.csv", curr_time, cwnd);
+        ssthresh = ceil((1.0 * cwnd) / (1LL << packet_losts));
+        cwnd = ssthresh;
+        packet_losts = 0;
         return;
-    cwnd += 1;
+    }
+    else if (packet_losts > 0 || wait_time > 0) {
+        if (timeOut()) {
+            wait_time = 0;
+            ssthresh = cwnd / 2;
+            cwnd = 1;
+            packet_losts = 0;
+        }
+        else {
+            wait_time++;
+        }
+    }
+    else {
+        if (cwnd >= ssthresh)
+            cwnd++;
+        else
+            cwnd *= 2;
+    }
+    curr_time += rtt;
 }
+int TCPConnection::onPacketLost(std::vector<Packet>& packets) {
+    int lost_count = 0;
+    int sent_packet = cwnd;
+    for (int i = 0; i < packets.size(); i++) {
+        //using namespace std::this_thread; // sleep_for, sleep_until
+        //using namespace std::chrono; // nanoseconds, system_clock, seconds
 
-void TCPConnection::onRTTUpdate(int rtt) {
-    this->rtt = rtt;
+        //sleep_for(nanoseconds(10));
+        //sleep_until(system_clock::now() + seconds(1));
+        double rand_num = (double)rand() / RAND_MAX;
+        double frac = (sent_packet / 1000.0);
+        if ((pow(frac, 10) > rand_num)) {
+            packets[i].is_ack = false;
+            lost_count++;
+            sent_packet--;
+        }
+    }
+    return lost_count;
+    //double rand_num = (double)rand() / RAND_MAX;
+    //double frac = (cwnd / 1000.0);
+    //if (pow(frac, 10)> rand_num)
+    //    return 1;
+    //else
+    //    return 0;
 }
-
 int TCPConnection::getCwnd() {
     return cwnd;
 }
