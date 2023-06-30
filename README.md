@@ -36,7 +36,9 @@ restarting the slow start phase.
 ## New Reno
 
 TCP New Reno is an enhancement of the TCP Reno congestion control algorithm. 
-It improves upon the original Reno algorithm by addressing certain limitations and providing better performance in certain scenarios.
+It is designed to provide better throughput and responsiveness in scenarios where there are both 
+packet losses and random packet reordering. By enhancing the fast recovery mechanism, introducing limited transmit, 
+and improving recovery after timeouts, TCP New Reno aims to improve the overall performance and efficiency of TCP congestion control.
 
 **Enhancement:**
 1. Fast Recovery Enhancements: TCP New Reno improves the fast recovery mechanism used in TCP Reno. In traditional Reno, 
