@@ -66,3 +66,8 @@ install_gnuplot:
 	$(INSTALL_CMD)
 
 deps: install_gnuplot
+
+show:
+	@python3 utils/plot.py results/tcp_reno.csv Reno
+	@python3 utils/plot.py results/tcp_new_reno.csv newReno
+	@python3 utils/plot.py results/tcp_bbr.csv BBR

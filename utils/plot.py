@@ -1,9 +1,13 @@
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 
 def plot(file, title, show):
+    if not os.path.exists(file):
+        print(f"Could find {file}!!!")
+        return
     df = pd.read_csv(file, header=None)
     x = df[0]
     y = df[1]
