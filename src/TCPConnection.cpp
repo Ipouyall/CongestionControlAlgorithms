@@ -10,8 +10,8 @@ TCPConnection::TCPConnection() {
     curr_time = 0;
     wait_time = 0;
     time_out = 2 * rtt;
-    fast_recovery = false;
-    fast_retransmit = false;
+    fast_recovery = true;
+    fast_retransmit = true;
     window.last_ack = -1;
     window.last_sent = -1;
     window.last_written = -1;
