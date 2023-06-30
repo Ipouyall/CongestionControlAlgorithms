@@ -208,7 +208,93 @@ However, TCP New Reno differs in how it handles new ACKs during the fast recover
    It has shown significant improvements in throughput and latency in many network conditions, 
    particularly in networks with high bandwidth and long RTTs.
 
-## 5.
+## 5. How you choose between these algorithms?
+Choosing between different congestion control approaches, such as TCP Reno, TCP New Reno, and TCP BBR, 
+depends on several factors and considerations:
 
-## 6.
+- Network Characteristics: Consider the specific characteristics of your network, including the available bandwidth, 
+round-trip time (RTT), and potential for congestion. TCP BBR is known to perform well in networks with high bandwidth 
+and long RTTs, while TCP Reno and TCP New Reno are more widely used and suitable for a variety of network conditions.
+- Latency vs. Throughput: Determine your priorities regarding latency and throughput. 
+If minimizing latency is crucial, TCP BBR may be a favorable choice due to its focus on reducing queuing delay. 
+If achieving high throughput is a primary concern, TCP BBR's bandwidth estimation and pacing mechanisms can optimize network utilization.
+- Application Requirements: Consider the specific requirements of your applications. Some applications, 
+such as real-time video streaming or interactive communication, may prioritize low latency and responsiveness. 
+Others, like bulk data transfer or file sharing, may prioritize maximizing throughput.
+- Deployment Compatibility: Evaluate the compatibility of the congestion control algorithms with your network infrastructure and endpoints. 
+TCP Reno and TCP New Reno are widely supported and available in most TCP implementations. TCP BBR may require 
+specific kernel patches or support from network devices and endpoints.
+- Experimental Evaluation: Consider conducting experiments or simulations in your specific network environment to evaluate 
+the performance of different congestion control algorithms. This can provide insights into their behavior, efficiency, 
+and suitability for your specific use case.
+- Expert Advice and Research: Consult with network experts, researchers, or industry best practices to gather insights 
+and recommendations regarding the selection of congestion control algorithms. 
+Stay informed about the latest developments and research in this field, as new algorithms and enhancements may emerge over time.
+
+## 6. Available  congestion control algorithms
+- TCP Reno: This is the standard and widely deployed congestion control algorithm. It uses a combination of slow start, 
+congestion avoidance, fast recovery, and fast retransmit mechanisms.
+- TCP New Reno: An enhancement to TCP Reno, it improves the handling of fast recovery by introducing limited transmit 
+and allowing for faster exit from the recovery phase.
+- TCP BBR (Bottleneck Bandwidth and Round-trip propagation time): A modern congestion control algorithm that aims 
+to maximize network throughput and reduce latency by estimating available bandwidth and round-trip time.
+- TCP Cubic: An algorithm designed to provide a scalable congestion control mechanism for high-speed networks. 
+It uses a cubic function to regulate the sending rate based on network conditions.
+- TCP Vegas: This algorithm focuses on minimizing delay instead of packet loss. 
+It adjusts the sending rate based on observed RTT variations to achieve low latency.
+- TCP CUBIC Plus: An enhancement to TCP Cubic that combines the benefits of both TCP Cubic 
+and TCP BBR to improve performance in different network scenarios.
+- Compound TCP (CTCP): This algorithm aims to provide fairness and congestion control in networks 
+with high bandwidth-delay products.
+- TCP Westwood: A TCP variant designed for wireless networks, particularly for dealing 
+with the characteristics of lossy and time-varying wireless links.
+
+**TCP Reno**:
+- Pros:
+  1. Well-Established: TCP Reno is a widely adopted and well-established congestion control algorithm, supported by most TCP implementations.
+  2. Compatibility: It is compatible with a wide range of network infrastructure and endpoints.
+  3. Robustness: TCP Reno performs well in various network scenarios and is resilient to different network conditions.
+  4. Fairness: It provides fair bandwidth sharing among multiple flows.
+- Cons:
+  1. Susceptible to Congestion Collapse: TCP Reno can experience congestion collapse in certain situations where multiple flows rapidly increase their sending rates simultaneously, leading to degraded network performance.
+  2. Latency: It may introduce higher latency due to its reliance on packet loss as a congestion signal.
+
+**TCP BBR**:
+- Pros:
+  1. Throughput Optimization: TCP BBR is designed to maximize network throughput by actively estimating available bandwidth and regulating the sending rate accordingly.
+  2. Low Latency: It aims to minimize queuing delay and reduce network latency, making it suitable for latency-sensitive applications.
+  3. Performance in High-Bandwidth Networks: TCP BBR performs well in networks with high bandwidth and long round-trip times.
+  4. Congestion Responsiveness: It responds quickly to congestion signals, adjusting the sending rate to alleviate congestion and maintain stability.
+- Cons:
+  1. Compatibility: TCP BBR may require specific kernel patches or support from network devices and endpoints, which could limit its compatibility in some environments.
+  2. Fairness: It has been observed that TCP BBR may prioritize its own flow over competing flows, potentially leading to unfairness in bandwidth allocation.
+  3. Sensitivity to RTT Estimation: Accurate estimation of round-trip time (RTT) is crucial for TCP BBR's performance, and inaccurate RTT measurements can impact its effectiveness.
+
+**TCP Westwood**:
+- Pros:
+  1. Wireless Network Optimization: TCP Westwood is specifically designed for wireless networks and performs well in lossy and time-varying wireless environments.
+  2. Enhanced Congestion Control: It uses a different approach to congestion control by considering the variation in available bandwidth, resulting in improved performance in wireless scenarios.
+  3. Fairness: TCP Westwood aims to provide fair bandwidth sharing among multiple flows.
+- Cons:
+  1. Limited Deployment: TCP Westwood is not as widely deployed or supported as TCP Reno or TCP BBR, and its compatibility may be limited.
+  2. Complexity: The algorithms and mechanisms used in TCP Westwood are more complex compared to traditional congestion control algorithms, making it more challenging to implement and understand.
+
+
+**TCP CUBIC**:
+- Pros:
+  1. Scalable Congestion Control: TCP CUBIC is designed to provide scalable performance in high-speed networks with large bandwidth-delay products.
+  2. Fairness: It aims to provide fair bandwidth sharing among multiple flows.
+  3. Stability: TCP CUBIC has been shown to provide stability and robustness in various network scenarios.
+- Cons:
+  1. Increased Latency: In certain situations, TCP CUBIC can introduce higher latency due to its congestion control mechanisms, especially when competing with other algorithms that prioritize low latency.
+  2. Sensitivity to Congestion Collapse: Similar to TCP Reno, TCP CUBIC may be susceptible to congestion collapse when multiple flows rapidly increase their sending rates simultaneously.
+
+**TCP Vegas**:
+- Pros:
+  1. Low Latency: TCP Vegas focuses on minimizing delay instead of relying on packet loss as a congestion signal, making it suitable for latency-sensitive applications.
+  2. Stability: It aims to provide stability in network congestion situations and performs well in scenarios with high bandwidth-delay products.
+- Cons:
+  1. Limited Deployment: TCP Vegas is not as widely deployed or supported as TCP Reno or TCP BBR, which may limit its compatibility.
+  2. Fairness: There have been concerns about TCP Vegas potentially prioritizing its own flow over competing flows, leading to fairness issues in bandwidth allocation.
+
 
