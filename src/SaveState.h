@@ -1,8 +1,9 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
-#include <time.h>
+#include <ctime>
 #include <fstream>
+#include <filesystem>
 
 #ifndef SAVE_STATE_H
 #define SAVE_STATE_H
