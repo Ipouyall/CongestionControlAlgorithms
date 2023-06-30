@@ -56,7 +56,11 @@ all: build
 build: $(TARGET)
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing object files and executables...$(NC)"
+	@rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing generated files...$(NC)"
+	@rm -rf results
+	@echo "$(GREEN)Done!$(NC)"
 
 install_gnuplot:
 	$(INSTALL_CMD)
