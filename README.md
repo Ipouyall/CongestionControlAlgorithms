@@ -33,6 +33,8 @@ it assumes that the next expected packet is lost and performs a fast retransmit 
 When a timeout occurs, the sender assumes that all unacknowledged packets are lost and retransmits them, 
 restarting the slow start phase.
 
+![plot](./results/tcp_reno.png)
+
 ## New Reno
 
 TCP New Reno is an enhancement of the TCP Reno congestion control algorithm. 
@@ -55,6 +57,7 @@ In TCP New Reno, the sender uses a more aggressive approach.
 It sets the congestion window to approximately half of the previous congestion window and starts the congestion avoidance phase directly. 
 This allows for a faster recovery and avoids an overly cautious restart.
 
+![plot](./results/tcp_new_reno.png)
 
 ## BBR
 The BBR (Bottleneck Bandwidth and Round-trip propagation time) algorithm's goal is to maximize network utilization 
@@ -83,6 +86,8 @@ than the network can handle without introducing excessive queueing delay.
 5. Response to Congestion: BBR is designed to be responsive to congestion signals. 
 When it detects signs of congestion such as increased queuing delay or packet loss, 
 it reacts by reducing the sending rate to alleviate congestion and avoid further deterioration of network performance.
+
+![plot](./results/tcp_bbr.png)
 
 # Questions
 
