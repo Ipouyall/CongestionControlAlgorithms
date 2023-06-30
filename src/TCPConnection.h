@@ -14,7 +14,7 @@
 //This is Reno
 
 class TCPConnection {
-private:
+protected:
     bool fast_retransmit;
     int cwnd;                    //congestion window
     int ssthresh;                //slow start threshold
@@ -28,13 +28,11 @@ private:
 public:
     TCPConnection();
     TCPConnection(int cwnd_, int rtt_, int time_out_, bool fast_retransmit_, bool fast_recovery_);
-    void createPackets(int count);
-    std::vector<Packet> SendData(std::pair<int, bool> lost_packet_verified);
-    std::pair<int, bool> onPacketLost(std::vector<Packet>& packets, std::pair<int, bool> last_lost_packet_verified);
-    void onRTTUpdate(std::pair<int, bool>& lost_packet_verified);
-    void showPacketsSent(const std::vector<Packet>& packets);
-    void showLostPacket(const std::pair<int, bool>& lost_packet_verified);
-    void showSlidingWindow();
+    virtual void createPackets(int count);
+    virtual std::vector<Packet> SendData() = 0;
+    virtual std::pair<int, bool> onPacketLost(std::vector<Packet>& packets, std::pair<int, bool> last_lost_packet_verified) = 0;
+    void showState();
+    virtual void onRTTUpdate(std::pair<int, bool>& lost_packet_verified) = 0;
     bool timeOut();
 
     int getCwnd();
@@ -43,7 +41,7 @@ public:
     void setCwnd(int cwnd);
     void setSsthresh(int ssthresh);
     void setRTT(int rtt);
-    void simulate();
+    virtual void simulate();
 };
 
 #endif //CONGESTIONCONTROLALGORITHMS_TCPCONNECTION_H

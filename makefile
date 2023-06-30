@@ -56,9 +56,18 @@ all: build
 build: $(TARGET)
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing object files and executables...$(NC)"
+	@rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing generated files...$(NC)"
+	@rm -rf results
+	@echo "$(GREEN)Done!$(NC)"
 
 install_gnuplot:
 	$(INSTALL_CMD)
 
 deps: install_gnuplot
+
+show:
+	@python3 utils/plot.py results/tcp_reno.csv Reno
+	@python3 utils/plot.py results/tcp_new_reno.csv newReno
+	@python3 utils/plot.py results/tcp_bbr.csv BBR
