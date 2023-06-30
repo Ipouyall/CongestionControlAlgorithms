@@ -57,6 +57,32 @@ This allows for a faster recovery and avoids an overly cautious restart.
 
 
 ## BBR
+The BBR (Bottleneck Bandwidth and Round-trip propagation time) algorithm's goal is to maximize network utilization 
+while minimizing latency and achieving a high throughput. It does this by continuously estimating the available bandwidth, 
+regulating the sending rate using pacing and probing, and responding to congestion signals.
+
+**How it works:**
+1. Bandwidth and RTT Estimation: 
+BBR actively estimates the available bandwidth and round-trip time (RTT) to the network bottleneck. 
+It measures the sending rate and observed RTT to determine the capacity of the network.
+2. Pacing and Probing: 
+BBR uses a combination of pacing and probing to regulate the sending rate. 
+Pacing ensures that packets are sent at a rate that matches the estimated bottleneck capacity. 
+Probing allows BBR to explore the available bandwidth without causing excessive queueing delay or packet loss.
+3. Mode Selection: 
+BBR operates in different modes based on network conditions. 
+The two main modes are the `startup` mode and the `steady-state` mode:
+   - Startup Mode: In the startup mode, BBR rapidly increases the sending rate to probe the available bandwidth. 
+   It aims to reach the bottleneck capacity quickly while avoiding excessive queueing delay.
+   - Steady-State Mode: Once BBR reaches the steady-state, 
+   it maintains the sending rate close to the estimated bottleneck capacity. 
+   It continuously monitors the network and adjusts the sending rate based on observed RTT and available bandwidth.
+4. Latency Optimization: BBR focuses on minimizing queuing delay and reducing network latency. 
+It does this by pacing the sending rate to match the available capacity and avoiding sending more data 
+than the network can handle without introducing excessive queueing delay.
+5. Response to Congestion: BBR is designed to be responsive to congestion signals. 
+When it detects signs of congestion such as increased queuing delay or packet loss, 
+it reacts by reducing the sending rate to alleviate congestion and avoid further deterioration of network performance.
 
 # Questions
 
@@ -97,6 +123,34 @@ When a timeout occurs, the sender assumes that all unacknowledged packets are lo
 resetting the cwnd to a small value and reentering the slow start phase.
 
 ## 3. BBR algorithm explanation
+The BBR algorithm aims to maximize network utilization, minimize latency, and achieve high throughput. 
+By actively estimating the available bandwidth, regulating the sending rate through pacing and probing, 
+and responding promptly to congestion signals, BBR optimizes network performance in various scenarios.
+
+1. Bandwidth and RTT Estimation: 
+BBR continuously measures the sending rate and the round-trip time (RTT) of packets. 
+It uses this information to estimate the available bandwidth and the RTT to the network bottleneck—the point 
+in the network where congestion occurs.
+2. Pacing and Probing: 
+BBR regulates the sending rate using a combination of pacing and probing. Pacing ensures that packets are sent at a rate 
+that matches the estimated bottleneck capacity. Probing allows BBR to explore the available bandwidth 
+without causing excessive queueing delay or packet loss.
+3. Mode Selection: BBR operates in different modes depending on network conditions:
+    - Startup Mode: In the startup mode, BBR rapidly increases the sending rate to probe the available bandwidth. 
+   It aims to reach the bottleneck capacity quickly while avoiding excessive queueing delay.
+    - Drain Mode: Once BBR detects that the network is fully utilized and congestion is likely, it enters the drain mode. 
+   In this mode, BBR gradually reduces the sending rate to alleviate congestion and prevent excessive queueing delay.
+    - Probe Bandwidth and Probe RTT Modes: BBR dynamically switches between these modes to estimate the available bandwidth 
+   and the RTT to the bottleneck. It periodically probes the network to ensure accurate measurements.
+4. Latency Optimization: BBR focuses on minimizing queuing delay and reducing network latency. 
+It does this by carefully pacing the sending rate to match the available capacity and avoiding sending more data 
+than the network can handle without introducing excessive queueing delay.
+5. Congestion Responsiveness: BBR is designed to respond quickly to signs of congestion. 
+It continuously monitors the network and looks for indicators such as increased queuing delay or packet loss. 
+When congestion is detected, BBR reacts by reducing the sending rate to alleviate congestion and maintain stability.
+6. Coupled Sender and Receiver: BBR requires both the sender and receiver to implement the algorithm to achieve 
+optimal performance. The receiver provides feedback to the sender about the available receive bandwidth, 
+enabling more accurate rate control.
 
 ## 4. Difference between Reno, New Reno and BBR
 
@@ -126,7 +180,33 @@ However, TCP New Reno differs in how it handles new ACKs during the fast recover
 
 
 ### TCP (new) Reno vs. TCP BBR
-
+1. Approach to Congestion Control:
+    - TCP Reno: TCP Reno relies on packet loss as a signal of network congestion. 
+   It uses a combination of slow start, congestion avoidance, fast recovery, and fast retransmit mechanisms 
+   to regulate the sending rate and react to congestion events.
+    - TCP BBR: TCP BBR takes a different approach to congestion control. 
+   It focuses on estimating the available network bandwidth and the round-trip time (RTT) to the bottleneck of the network. 
+   It aims to maximize network utilization and achieve low latency by continuously probing and adapting the sending rate 
+   based on available capacity and RTT measurements.
+2. Congestion Detection:
+   - TCP Reno: TCP Reno detects congestion primarily through the occurrence of packet loss. 
+   It interprets the receipt of duplicate ACKs or a timeout as indications of congestion in the network.
+   - TCP BBR: TCP BBR infers network congestion by monitoring the rate at which acknowledgments (ACKs) are received 
+   and the observed RTT. It aims to maintain a high sending rate while avoiding increased queueing delay or loss at the bottleneck.
+3. Bandwidth Estimation:
+   - TCP Reno: TCP Reno does not explicitly estimate the available bandwidth in the network.
+   - TCP BBR: TCP BBR actively estimates the available bandwidth by continuously probing the network using 
+   a combination of pacing and probing mechanisms. It aims to maintain a sending rate close to the estimated bottleneck bandwidth.
+4. Latency Optimization:
+   - TCP Reno: TCP Reno does not explicitly optimize for low latency.
+   - TCP BBR: TCP BBR aims to minimize queuing delay and achieve low latency by continuously probing the network 
+   and adjusting the sending rate based on RTT measurements.
+5. Performance:
+   - TCP Reno: TCP Reno is a widely adopted and well-established congestion control algorithm. 
+   It performs well in a wide range of network scenarios, but its performance can be affected by high latency or packet loss.
+   - TCP BBR: TCP BBR is a relatively newer congestion control algorithm designed to optimize both bandwidth and latency. 
+   It has shown significant improvements in throughput and latency in many network conditions, 
+   particularly in networks with high bandwidth and long RTTs.
 
 ## 5.
 
