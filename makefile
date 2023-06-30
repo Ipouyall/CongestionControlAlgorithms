@@ -56,7 +56,11 @@ all: build
 build: $(TARGET)
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing object files and executables...$(NC)"
+	@rm -rf $(OBJDIR) $(BINDIR)
+	@echo "$(RED)Removing generated files...$(NC)"
+	@rm -rf tcp_reno.csv tcp_new_reno.csv tcp_bbr.csv
+	@echo "$(GREEN)Done!$(NC)"
 
 install_gnuplot:
 	$(INSTALL_CMD)
