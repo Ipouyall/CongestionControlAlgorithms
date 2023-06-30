@@ -15,10 +15,10 @@ Reno::Reno(int cwnd_, int rtt_, int time_out_, bool fast_retransmit_, bool fast_
 
 
 
-vector<Packet> Reno::SendData(pair<int, bool> lost_packet_verified) {
+vector<Packet> Reno::SendData() {
     vector<Packet> data;
     int count = 0;
-    if (lost_packet_verified.first != -1)
+    if (wait_time != 0)
         return data;
     for (int i = window.last_ack + 1; i <= window.last_written; i++) {
         if (count == cwnd)
@@ -34,33 +34,8 @@ vector<Packet> Reno::SendData(pair<int, bool> lost_packet_verified) {
 }
 
 void Reno::onRTTUpdate(pair<int, bool>& lost_packet_verified) {
-    save_state("tcp_reno.csv", curr_time, cwnd);
-    cout << "cwnd = " << cwnd << "::" << "time = " << curr_time << "::" << "wait time = " << wait_time << endl;
-    if (lost_packet_verified.first != -1 && lost_packet_verified.second) {
-        curr_time += 0.3 * rtt;
-        ssthresh = cwnd / 2;
-        if (fast_recovery)
-            cwnd = ssthresh;
-        else
-            cwnd = 1;
-        lost_packet_verified.first = -1;
-        lost_packet_verified.second = false;
-        return;
-    }
-    else if (lost_packet_verified.first != -1  || wait_time > 0) {
-        if (TCPConnection::timeOut()) {
-            cout << "Time out occured!" << endl;
-            wait_time = 0;
-            ssthresh = cwnd / 2;
-            cwnd = 1;
-            lost_packet_verified.first = -1;
-            lost_packet_verified.second = false;
-        }
-        else {
-            wait_time++;
-        }
-    }
-    else {
+
+    if (lost_packet_verified.first == -1) {
         if (cwnd >= ssthresh)
             cwnd++;
         else
@@ -72,8 +47,6 @@ pair<int, bool> Reno::onPacketLost(std::vector<Packet>& packets, pair<int, bool>
     int lost_count = 0;
     int dup_ack = 0;
     pair<int, bool> lost_packet_verified = {-1, false};
-    if (last_lost_packet_verified.first != -1)
-        return last_lost_packet_verified;
     for (int i = 0; i < (int) packets.size(); i++) {
         if (loose_packet(cwnd, 1, 1000)) {
             if (lost_packet_verified.first == -1) {
@@ -86,7 +59,7 @@ pair<int, bool> Reno::onPacketLost(std::vector<Packet>& packets, pair<int, bool>
             if (lost_packet_verified.first != -1) {
                 if (dup_ack == 2 && fast_retransmit) {
                     lost_packet_verified.second = true;
-                    return lost_packet_verified;
+                    break;
                 }
                 else {
                     dup_ack++;
@@ -99,6 +72,31 @@ pair<int, bool> Reno::onPacketLost(std::vector<Packet>& packets, pair<int, bool>
             }
         }
     }
+
+    if (lost_packet_verified.first != -1 && lost_packet_verified.second) {
+        curr_time += 0.3 * rtt;
+        ssthresh = cwnd / 2;
+        if (fast_recovery)
+            cwnd = ssthresh;
+        else
+            cwnd = 1;
+        return lost_packet_verified;
+    }
+    else if (lost_packet_verified.first != -1  || wait_time > 0) {
+        if (wait_time > 0)
+            lost_packet_verified = last_lost_packet_verified;
+        if (TCPConnection::timeOut()) {
+            cout << "Time out occured!" << endl;
+            wait_time = 0;
+            ssthresh = cwnd / 2;
+            cwnd = 1;
+        }
+        else {
+            wait_time++;
+        }
+        return lost_packet_verified;
+    }
+
     return lost_packet_verified;
 }
 void Reno::showPacketsSent(const std::vector<Packet>& packets) {
@@ -125,11 +123,12 @@ void Reno::showSlidingWindow() {
 }
 
 void Reno::simulate() {
-    int losts = 0;
     pair<int, bool> lost_packet_verified = { -1, false };
     TCPConnection::createPackets(100000);
     while (window.last_ack != window.last_written) {
-        vector<Packet> packets = SendData(lost_packet_verified);
+        save_state(RENO_FILE, curr_time, cwnd);
+        TCPConnection::showState();
+        vector<Packet> packets = SendData();
         showSlidingWindow();
         lost_packet_verified = onPacketLost(packets, lost_packet_verified);
         showLostPacket(lost_packet_verified);

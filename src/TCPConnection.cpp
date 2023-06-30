@@ -10,8 +10,8 @@ TCPConnection::TCPConnection() {
     curr_time = 0;
     wait_time = 0;
     time_out = 2 * rtt;
-    fast_recovery = true;
-    fast_retransmit = true;
+    fast_recovery = false;
+    fast_retransmit = false;
     window.last_ack = -1;
     window.last_sent = -1;
     window.last_written = -1;
@@ -35,6 +35,11 @@ void TCPConnection::createPackets(int count) {
         sent_data.push_back(Packet{ rand(), false, false, false, i });
         window.last_written++;
     }
+}
+
+void TCPConnection::showState(){
+        cout << "cwnd = " << cwnd << "::" << "time = " << curr_time << "::" << "wait time = " << wait_time <<
+         "::" << "ssthresh = " << ssthresh << endl;
 }
 
 void TCPConnection::simulate() {
